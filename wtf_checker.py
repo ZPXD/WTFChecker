@@ -4,13 +4,10 @@ import sys
 
 
 '''
-PyChecker
+WTFChecker
 
 Protect your Python code from any malware, viruses or unwanted functionality.
 See what's up.
-
-Cybersecurity is a team sport. 
-Don't wait. Contribute.
 
 
 ZPXD, Łukasz Pintal.
@@ -18,7 +15,7 @@ ZPXD, Łukasz Pintal.
 
 
 
-class PyChecker():
+class WTFChecker():
 	
 	# Paths.
 	landing_main_folder = 'file_landing'
@@ -29,7 +26,9 @@ class PyChecker():
 	not_now_folder = 'not_now'
 	not_yet_folder = 'not_yet'
 	hall_of_fame_folder = 'hall_of_fame'
-
+	
+	result_text = 'result.txt'
+	
 	# Lists.
 	black_list_keywords = [] 
 
@@ -49,6 +48,7 @@ class PyChecker():
 		'''
 		.
 		'''
+		self.landing_folder_path = self.file_landing + '/' + self.landing_folder
 		self.landing_folder_path = self.file_landing + '/' + self.landing_folder
 		self.ok_folder_path = self.file_landing + '/' + self.ok_folder
 		self.not_now_folder_path = self.file_landing + '/' + self.not_now_folder
@@ -71,7 +71,6 @@ class PyChecker():
 			os.mkdir(self.not_yet_folder_path)
 		if not os.path.exists(self.hall_of_fame_folder_path):
 			os.mkdir(self.hall_of_fame_folder_path)
-
 
 	def setup_prequisites(self):
 		'''
@@ -104,11 +103,40 @@ class PyChecker():
 
 	# Files operations.
 
-	def list_all_folder_files(self, what):
+	def list_all_folder_files(self, folder_path, condition=None):
 		'''
-		.
+		Returns list of all file paths from given folder that fulfill the condition.
+
+		folder_path: str: path of a folder you want to search.
+		condition: ['str', 'str', 'str'] or 'str': what you look for in a file name.
 		'''
-		pass
+		new_folders = [folder_path]
+		new_files = []
+		for folder_path in new_folders:
+			for folder, folders_in, files_in in os.walk(folder_path, topdown=True):
+				for folder_in in folders_in:
+					full_folder_path = folder_path + '/' + folder_in
+					if full_folder_path not in new_folders:
+						new_folders.append(full_folder_path)
+
+				for file in files_in:
+					if condition:
+						if isinstance(condition, list):
+							for c in condition:
+								if c in file:
+									file_path = folder + '/' + file
+									if not file_path in new_files:
+										new_files.append(file_path)
+						else:
+							if condition in file:
+								file_path = folder + '/' + file
+								if not file_path in new_files:
+									new_files.append(file_path)
+					else:
+						file_path = folder + '/' + file
+						if not file_path in new_files:
+							new_files.append(file_path)
+		return new_files
 
 	def is_folder(self, what):
 		'''
@@ -127,6 +155,11 @@ class PyChecker():
 			command = 'cp {} {}'.format(what, where)
 		os.system(command)
 
+	def create_id(self):
+	    check_id = ''
+	    for i in range(10):
+	        check_id += random.choice(string.ascii_lowercase)
+	    return check_id
 
 
 
@@ -172,7 +205,19 @@ class PyChecker():
 		'''
 		pass
 
+	# ZIP:
 
+	def is_zip(file_path):
+		return None
+
+	def unzip():
+		return None 
+
+	def file_decider(file_path):
+		if is_zip(file_path):
+			files None
+		else:
+			return None
 
 	# Anything downloaded.
 
@@ -203,7 +248,6 @@ class PyChecker():
 		'''
 		.
 		'''
-
 		self.prepare_file(file_path)
 		result = None
 		foundings = []
@@ -536,18 +580,27 @@ class PyChecker():
 
 	# Check.
 
-	def what_files_to_check(self, what):
+	def what_files_to_check(self, what=None):
+		'''
+		.
+		'''
 		# What. List files to check.
 		if not what:
 			what = self.landing_folder_path
 		if isinstance(what, list):
 			files = []
-			for link in what:
-				files.append(self.list_all_folder_files(what))
+			for file in what:
+				if self.is_folder(what):
+					files.extend(self.list_all_folder_files(file))
+				elif not file in files:
+					files.append(file)
 		else:
 			if self.is_folder(what):
 				files = self.list_all_folder_files(what)
 			else:
+				if self.is_zip(what):
+					unzipped_files = self.unzip(what)
+					files = self.list_all_folder_files(file)
 				files = [what]
 		return files
 
@@ -557,6 +610,10 @@ class PyChecker():
 		'''
 		check_list = open(what).readlines()
 		self.check_it(check_list)
+
+	def estimate(self,):
+		files = self.what_files_to_check(what)
+		return len(files)/3 # Code it later
 
 	def check_it(self, what=None, check_options=None):
 		'''
@@ -570,8 +627,11 @@ class PyChecker():
 		check_results['results'] = [] # {}
 		check_results['files'] = [] # {}
 
-		# Check all files.
+		# Estimate time:
 		files = self.what_files_to_check(what)
+		self.time_to_check = len(files)/3 # Code it later
+
+		# Check all files.
 		for file in files:
 			# What file is this? Check it.
 			file_type = self.what_is_this_file(file)
@@ -602,11 +662,22 @@ class PyChecker():
 		# Return and present result.
 		self.results(check_results, check_options)
 
+	def read_result_for(self, result_file):
+		'''
+		.
+		'''
+		if result_file.endswith('.json'):
+			result = json.loads(result_file)
+		else: 
+			result = open(result_file).readlines()
+		return result
 
 	def results(self, check_results, check_options=None):
-
+		'''
+		.
+		'''
 		if check_options:
-			print('Alfa PyChecker use is with no config for now.')
+			print('Alfa WTFChecker use is with no config for now.')
 			pass
 
 		# Default result:
@@ -614,17 +685,31 @@ class PyChecker():
 		# 2. Prints each risky element for each file.
 		# 3. Checks everything down there. 
 		else:
-			for file in check_results['files']:
-				if file['result'] > 0:
-					print(file['result']. file['path'])
-					for k, v in file['foundings'].items():
-						if len(file['foundings'][key]) > 0:
-							for i, wtf in enumerate(file['foundings'][key], 1):
-								print(i, file['foundings'][key]['line'])
-			print(check_results['result'])
-			return check_results['result']
+			result_folder_path = self.landing_folder_path + "/" + create_id()
+			result_path = result_folder_path + '/' + self.result_text
+			if not result_folder_path:
+				os.mkdir(result_folder_path)
 
-	# What's up?
+			with open('result.txt', 'w') as f:
+				f.write(check_results['result'])
+				f.write(check_results['results'])
+				f.write('\n')
+				for file in check_results['files']:
+					if file['result'] > 0:
+						f.write(file['result']+' ', file['path'])
+						f.write('\n')
+						print(file['result']. file['path'])
+						for k, v in file['foundings'].items():
+							if len(file['foundings'][key]) > 0:
+								for i, wtf in enumerate(file['foundings'][key], 1):
+									print(i, file['foundings'][key]['line'])
+									f.write(str(i) + ' ' + file['foundings'][key]['line'])
+									f.write('\n')
+
+		print(check_results['result'])
+		return check_results['result'], check_results
+
+		# What's up?
 
 
 if __name__ == '__main__':
@@ -633,14 +718,12 @@ if __name__ == '__main__':
 	# 1. Intro.
 
 	print()
-	print('Pychecker.')
+	print('WTFChecker.')
 	print()
 
-
 	# 2. Basic sequence.
-	WTF = PyChecker()
+	WTF = WTFChecker()
 	#WTF.check_it()
-
 
 	'''
 	3. Usage. What.
@@ -688,16 +771,16 @@ if __name__ == '__main__':
 		print('Use:')
 		print('')
 		print('0. no arguments - check landing.')
-		print('python3 pychecker.py')
+		print('python3 WTFChecker.py')
 		print('')
 		print('1. 1 argument - check file/folder by given path.')
-		print('python3 pychecker.py /path/to/folder/file.py')
+		print('python3 WTFChecker.py /path/to/folder/file.py')
 		print('')
 		print('2. flag  -c <path> ---- check file(s) under given path.')
-		print('python3 pychecker.py -c /path/to/folder/file.py')
+		print('python3 WTFChecker.py -c /path/to/folder/file.py')
 		print('')
 		print('3. flag -cf <path> ---- check all folders and files listed in a linked file.')
-		print('python3 pychecker.py -cf /path/to/paths_list.txt')
+		print('python3 WTFChecker.py -cf /path/to/paths_list.txt')
 		print('')
 		print('')
 		print('Keep it up. Cheers.')

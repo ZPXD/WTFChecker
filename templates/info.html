@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    {# HEADLINE #}
+    
+    <div class="headline" style="text-align:center">
+        <br>
+        <br>
+        <p>Result: {{result.result[0]}}</p>
+        <br>
+        <br>
+        <br>
+    </div>
+    
+
+    {# ACTION #}
+
+    <div class="checker-info">
+        <br>
+        <br>
+        <br>
+        <h2 style="text-align:center">What happened:</h2>
+        <br>
+        {% for line in result[1:] %}
+            <p>{{line}}</p>
+        {% endfor %}
+        <br>
+    </div>
+
+{% endblock %}

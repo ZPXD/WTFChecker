@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    {# HEADLINE #}
+    
+    <div class="headline" style="text-align:center">
+        <br>
+        <br>
+        <p>Chill.</p>
+        <br>
+        <br>
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/0Sfm2DTiGzg" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        <br>
+    </div>
+    
+
+    {# ACTION #}
+
+    <br>
+    <br>
+    <br>
+    <div class="form-wrapper" style="text-align:center">
+        <form style="text-align:center" action="" method="post" enctype="multipart/form-data">
+            {{ form.csrf_token() }}
+            <p><b>Zobacz za {{check_time}} </b></p>
+            {{ form.ok }}
+        </form>
+    </div>
+    <br>
+
+{% endblock %}
+
